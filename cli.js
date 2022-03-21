@@ -145,7 +145,7 @@ if (source === 'create') {
       var timeStart = (new Date()).getTime()
       console.log(fileCount.toString(), (fileCount === 1 ? 'file' : 'files'), 'in torrent')
       console.log(dl.files.map(function (f) { return f.name.trim() }).join('\n'))
-      let interval=null;
+      let interval = null;
 
       var status = function () {
         var down = bytes(dl.swarm.downloaded)
@@ -159,7 +159,9 @@ if (source === 'create') {
         var bars = ~~((percentage) / 5)
 
         // (TimeTaken / bytesDownloaded) * bytesLeft=timeLeft
-        if(percentage>=100) return clearInterval(interval);
+        if (percentage >= 100) { 
+          log("Complete... No seeding... Finishing...");
+          return clearInterval(interval); }
         else if (dl.swarm.downloaded > 0) {
           if (dl.swarm.downloadSpeed() > 0) {
             var seconds = 1000
