@@ -27,7 +27,7 @@ if (argv.help || argv._.length === 0) {
   process.exit(0)
 }
 
-if (argv.quiet) log = function () {}
+if (argv.quiet) log = function () { }
 
 var source = argv._.shift()
 var infile
@@ -71,7 +71,7 @@ if (source === 'create') {
     delete parsed.info.pieces
     console.log(JSON.stringify(toString(parsed), null, 2))
 
-    function toString (obj) {
+    function toString(obj) {
       if (Array.isArray(obj)) {
         return obj.map(toString)
       } else if (Buffer.isBuffer(obj)) {
@@ -116,7 +116,7 @@ if (source === 'create') {
       } else {
         console.log('Verified files successfully!')
       }
-      function status () {
+      function status() {
         log(
           'Seeding ' + filename + '\n' +
           'Connected to ' + dl.swarm.wires.reduce(notChoked, 0) + '/' + dl.swarm.wires.length + ' peers\n' +
@@ -130,6 +130,7 @@ if (source === 'create') {
   })
 } else {
   if (!argv.path) argv.path = process.cwd()
+  var noSeed = !!argv._.shift() || false;
 
   getSource(source, function (body) {
     var dl = torrent(body, argv)
@@ -144,6 +145,7 @@ if (source === 'create') {
       var timeStart = (new Date()).getTime()
       console.log(fileCount.toString(), (fileCount === 1 ? 'file' : 'files'), 'in torrent')
       console.log(dl.files.map(function (f) { return f.name.trim() }).join('\n'))
+      let interval=null;
 
       var status = function () {
         var down = bytes(dl.swarm.downloaded)
@@ -157,7 +159,8 @@ if (source === 'create') {
         var bars = ~~((percentage) / 5)
 
         // (TimeTaken / bytesDownloaded) * bytesLeft=timeLeft
-        if (dl.swarm.downloaded > 0) {
+        if(percentage>=100) return clearInterval(interval);
+        else if (dl.swarm.downloaded > 0) {
           if (dl.swarm.downloadSpeed() > 0) {
             var seconds = 1000
             var timeNow = (new Date()).getTime()
@@ -191,16 +194,16 @@ if (source === 'create') {
       }
 
       setInterval(status, 500)
-      status()
+      // status()
     })
   })
 }
 
-function notChoked (result, wire) {
+function notChoked(result, wire) {
   return result + (wire.peerChoking ? 0 : 1)
 }
 
-function getSource (infile, cb) {
+function getSource(infile, cb) {
   if (/^magnet:/.test(infile)) return cb(infile)
   var instream = !infile || infile === '-'
     ? process.stdin
@@ -208,7 +211,7 @@ function getSource (infile, cb) {
   instream.pipe(concat(cb))
 }
 
-function getInfo (infile, cb) {
+function getInfo(infile, cb) {
   getSource(infile, function (body) {
     try {
       var parsed = parseTorrent(body)
