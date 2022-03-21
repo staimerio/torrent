@@ -161,7 +161,9 @@ if (source === 'create') {
         // (TimeTaken / bytesDownloaded) * bytesLeft=timeLeft
         if (percentage >= 100) { 
           log("Complete... No seeding... Finishing...");
-          return clearInterval(interval); }
+          clearInterval(interval);
+          return process.exit();
+        }
         else if (dl.swarm.downloaded > 0) {
           if (dl.swarm.downloadSpeed() > 0) {
             var seconds = 1000
