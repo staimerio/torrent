@@ -1,8 +1,8 @@
 {
-  "name": "@staimerio/torrent",
+  "name": "torrent-noseed",
   "version": "2.0.0",
   "bin": {
-    "torrent": "cli.js"
+    "torrentns": "cli.js"
   },
   "description": "torrent from the command line",
   "main": "index.js",
@@ -25,13 +25,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/maxogden/torrent.git"
+    "url": "https://github.com/staimerio/torrent.git"
   },
   "bugs": {
-    "url": "https://github.com/maxogden/torrent/issues"
+    "url": "https://github.com/staimerio/torrent/issues"
   },
   "scripts": {
     "test": "standard"
   },
-  "homepage": "https://github.com/maxogden/torrent"
+  "homepage": "https://github.com/staimerio/torrent"
 }
