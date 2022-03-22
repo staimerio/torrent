@@ -130,10 +130,12 @@ if (source === 'create') {
   })
 } else {
   if (!argv.path) argv.path = process.cwd()
-  var noSeed = !!argv._.shift() || false;
+  var noSeed = argv._.shift() === 1 || false;
+  var path = argv._.shift() || "";
 
   getSource(source, function (body) {
-    var dl = torrent(body, argv)
+    var dl = torrent(body, argv);
+    let intervalTime = 500;
 
     dl.on('ready', function () {
       if (argv.peer) {
@@ -146,6 +148,9 @@ if (source === 'create') {
       console.log(fileCount.toString(), (fileCount === 1 ? 'file' : 'files'), 'in torrent')
       console.log(dl.files.map(function (f) { return f.name.trim() }).join('\n'))
       let interval = null;
+      let timeout = 1 * 60 * 1000 / intervalTime;
+      let previousPercentage = 0;
+      let countPrevPercentage = 0;
 
       var status = function () {
         var down = bytes(dl.swarm.downloaded)
@@ -157,10 +162,28 @@ if (source === 'create') {
         var percentage = ((dl.swarm.downloaded / dl.torrent.length) * 100).toPrecision(4)
         var progressBar = ''
         var bars = ~~((percentage) / 5)
+        previousPercentage = percentage;
 
         // (TimeTaken / bytesDownloaded) * bytesLeft=timeLeft
-        if (percentage >= 100) { 
+
+        if (previousPercentage === percentage) {
+          countPrevPercentage++;
+        }
+        if (noSeed && percentage >= 100) {
           log("Complete... No seeding... Finishing...");
+          clearInterval(interval);
+          return process.exit();
+        }
+        else if (countPrevPercentage >= timeout) {
+          fs.rmdir(path, { recursive: true }, (err) => {
+            if (err) {
+              throw err;
+            }
+
+            console.log(`${path} is deleted!`);
+          });
+
+          log("Timeout...");
           clearInterval(interval);
           return process.exit();
         }
@@ -191,13 +214,14 @@ if (source === 'create') {
           'Downloaded ' + down + ' (' + downSpeed + ')\n' +
           'Uploaded ' + up + ' (' + upSpeed + ')\n' +
           'Torrent Size ' + bytes(torrentSize) + '\n\n' +
+          'Timeout: ' + countPrevPercentage + '/' + timeout + ' times\n' +
           'Complete: ' + percentage + '%\n' +
           '[' + progressBar + ']\n' +
           '0%    25   50   75   100%\n\n' + timeRemaining + '\n'
         )
       }
 
-      setInterval(status, 500)
+      setInterval(status, intervalTime)
       // status()
     })
   })
