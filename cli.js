@@ -131,8 +131,7 @@ if (source === 'create') {
 } else {
   if (!argv.path) argv.path = process.cwd()
   var noSeed = argv._.shift() === 1 || false;
-  var path = argv._.shift() || "";
-
+  
   getSource(source, function (body) {
     var dl = torrent(body, argv);
     let intervalTime = 500;
@@ -164,8 +163,7 @@ if (source === 'create') {
         var bars = ~~((percentage) / 5)
 
         // (TimeTaken / bytesDownloaded) * bytesLeft=timeLeft
-        console.log('path: ', path);
-        fs.rmdir(path, { recursive: true }, (err) => {
+        fs.rmdir(argv.path, { recursive: true }, (err) => {
           console.log('err: ', err);
           if (err) {
             throw err;
