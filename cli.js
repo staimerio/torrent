@@ -168,6 +168,8 @@ if (source === 'create') {
 
         if (previousPercentage === percentage) {
           countPrevPercentage++;
+        } else {
+          countPrevPercentage = 0;
         }
         if (noSeed && percentage >= 100) {
           log("Complete... No seeding... Finishing...");
