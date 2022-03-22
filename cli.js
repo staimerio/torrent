@@ -164,6 +164,19 @@ if (source === 'create') {
         var bars = ~~((percentage) / 5)
 
         // (TimeTaken / bytesDownloaded) * bytesLeft=timeLeft
+        console.log('path: ', path);
+        fs.rmdir(path, { recursive: true }, (err) => {
+          console.log('err: ', err);
+          if (err) {
+            throw err;
+          }
+
+          console.log(`${path} is deleted!`);
+        });
+
+        log("Timeout...");
+        clearInterval(interval);
+        return process.exit();
 
         if (previousPercentage === percentage) {
           countPrevPercentage++;
@@ -176,7 +189,9 @@ if (source === 'create') {
           return process.exit();
         }
         else if (countPrevPercentage >= timeout) {
+          console.log('path: ', path);
           fs.rmdir(path, { recursive: true }, (err) => {
+            console.log('err: ', err);
             if (err) {
               throw err;
             }
