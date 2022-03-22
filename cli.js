@@ -162,7 +162,6 @@ if (source === 'create') {
         var percentage = ((dl.swarm.downloaded / dl.torrent.length) * 100).toPrecision(4)
         var progressBar = ''
         var bars = ~~((percentage) / 5)
-        previousPercentage = percentage;
 
         // (TimeTaken / bytesDownloaded) * bytesLeft=timeLeft
 
@@ -211,6 +210,7 @@ if (source === 'create') {
 
         progressBar = progressBar + Array(20 + 1 - progressBar.length).join(' ')
 
+        previousPercentage = percentage;
         log(
           'Connected to ' + dl.swarm.wires.reduce(notChoked, 0) + '/' + dl.swarm.wires.length + ' peers\n' +
           'Downloaded ' + down + ' (' + downSpeed + ')\n' +
