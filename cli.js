@@ -131,7 +131,7 @@ if (source === 'create') {
 } else {
   if (!argv.path) argv.path = process.cwd()
   var noSeed = argv._.shift() === 1 || false;
-  
+
   getSource(source, function (body) {
     var dl = torrent(body, argv);
     let intervalTime = 500;
@@ -161,20 +161,7 @@ if (source === 'create') {
         var percentage = ((dl.swarm.downloaded / dl.torrent.length) * 100).toPrecision(4)
         var progressBar = ''
         var bars = ~~((percentage) / 5)
-
-        // (TimeTaken / bytesDownloaded) * bytesLeft=timeLeft
-        fs.rmdir(argv.path, { recursive: true }, (err) => {
-          console.log('err: ', err);
-          if (err) {
-            throw err;
-          }
-
-          console.log(`${path} is deleted!`);
-        });
-
-        log("Timeout...");
-        clearInterval(interval);
-        return process.exit();
+        let error = "";
 
         if (previousPercentage === percentage) {
           countPrevPercentage++;
@@ -187,17 +174,11 @@ if (source === 'create') {
           return process.exit();
         }
         else if (countPrevPercentage >= timeout) {
-          console.log('path: ', path);
-          fs.rmdir(path, { recursive: true }, (err) => {
-            console.log('err: ', err);
-            if (err) {
-              throw err;
-            }
-
-            console.log(`${path} is deleted!`);
+          fs.writeFileSync("log.error", "Torrent doesnt download", function (err) {
+            error += err ? err.stack : "Done...\n";
           });
-
-          log("Timeout...");
+          error += "Timeout...."
+          log(error);
           clearInterval(interval);
           return process.exit();
         }

@@ -1,6 +1,6 @@
 {
   "name": "torrent-noseed",
-  "version": "2.1.6",
+  "version": "2.1.12",
   "bin": {
     "torrentns": "cli.js"
   },
